@@ -16,7 +16,7 @@ public:
     ~MainWindow();
 
 private slots:
-    void on_pb_toggleButton_toggled(bool checked);
+    void on_pb_toggleButton_clicked();
 
 private:
     Ui::MainWindow *ui;

@@ -31,17 +31,13 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-
-void MainWindow::on_pb_toggleButton_toggled(bool checked)
+void MainWindow::on_pb_toggleButton_clicked()
 {
-    if(checked){
-        if(ui->progressBar->value() >= 10){
-            ui->progressBar->setValue(0);
-        }
-        else{
-            ui->progressBar->setValue(ui->progressBar->value() + 1);
-        }
+    if(ui->progressBar->value() >= 10){
+        ui->progressBar->setValue(0);
+    }
+    else{
+        ui->progressBar->setValue(ui->progressBar->value() + 1);
     }
 }
-
 
