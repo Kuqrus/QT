@@ -12,7 +12,7 @@ public:
 
     void pb_lap_pressed();
 
-    void Stopwatching();
+    void Counting();
 
     void Clear();
 
@@ -20,17 +20,28 @@ public:
 
     QString GetLapTime();
 
+    QString TimeToString(double ms_sec, int min);
+
+    void Execute(bool checked);
+
 signals:
     void sig_pb_lap_pressed();
 
+    void sig_start_toggled();
+
 private:
-    int ms = 0;
-    int sec = 0;
+    double ms_sec = 0.0;
     int min = 0;
+    QString time = "00:00.0";
 
     int lap = 0;
+    double lap_ms_sec = 0.0;
+    int lap_min = 0;
+    QString lap_time = "00:00.0";
 
-    QString time = "00:00.0";
+    QString str_0;
+
+    QTimer *timer;
 };
 
 #endif // STOPWATCH_H

@@ -7,14 +7,12 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     stopwatch = new Stopwatch(this);
-    timer = new QTimer(this);
 
     ui->pb_lap->setEnabled(0);
     ui->label_seconds->setText(stopwatch->GetTime());
 
     connect(stopwatch, &Stopwatch::sig_pb_lap_pressed, this, &MainWindow::rcv_pb_lap_pressed);
-    connect(timer, &QTimer::timeout, this, &MainWindow::updateTime);
-
+    connect(stopwatch, &Stopwatch::sig_start_toggled, this, &MainWindow::updateTime);
 }
 
 
@@ -30,22 +28,21 @@ void MainWindow::rcv_pb_lap_pressed()
 
 void MainWindow::updateTime()
 {
-    stopwatch->Stopwatching();
     ui->label_seconds->setText(stopwatch->GetTime());
 }
 
 
 void MainWindow::on_pb_start_toggled(bool checked)
 {
+    stopwatch->Execute(checked);
+
     if(checked){
         ui->pb_lap->setEnabled(1);
         ui->pb_start->setText("Стоп");
-        timer->start(100);
     }
     else {
         ui->pb_lap->setEnabled(0);
         ui->pb_start->setText("Старт");
-        timer->stop();
     }
 }
 

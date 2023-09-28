@@ -33,7 +33,5 @@ private:
 
     Ui::MainWindow *ui;
     Stopwatch *stopwatch;
-
-    QTimer *timer;
 };
 #endif // MAINWINDOW_H

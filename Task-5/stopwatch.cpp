@@ -2,8 +2,10 @@
 
 Stopwatch::Stopwatch(QObject *parent)
     : QObject{parent}
-{
+{    
+    timer = new QTimer(this);
 
+    connect(timer, &QTimer::timeout, this, &Stopwatch::Counting);
 }
 
 void Stopwatch::pb_lap_pressed()
@@ -11,41 +13,46 @@ void Stopwatch::pb_lap_pressed()
     emit sig_pb_lap_pressed();
 }
 
-void Stopwatch::Stopwatching()
+QString Stopwatch::TimeToString(double ms_sec, int min)
 {
-    if(ms >= 9){
-        sec++;
-        ms = 0;
-    }
-    else if(sec >= 59){
-        min++;
-        sec = 0;
-    }
-    else ms++;
+    QString str_min = QString::number(min);
+    str_min = str_0.fill('0', 2 - str_min.size()) + str_min;
 
+    QString str_ms_sec = QString::number(ms_sec, 'f', 1);
+    str_ms_sec = str_0.fill('0', 4 - str_ms_sec.size()) + str_ms_sec;
 
-    if(min <= 9){
-        time = "0" + QString::number(min);
-    }
-    else{
-        time = QString::number(min);
-    }
-
-    if(sec <= 9){
-        time += ":0" + QString::number(sec);
-    }
-    else{
-        time += ":" + QString::number(sec);
-    }
-
-    time += "." + QString::number(ms);
+    return str_min + ":" + str_ms_sec;
 }
 
 void Stopwatch::Clear()
 {
-    ms = 0, sec = 0, min = 0;
+    ms_sec = 0, min = 0;
+    lap_ms_sec = 0, lap_min = 0;
     lap = 0;
     time = "00:00.0";
+    lap_time = "00:00.0";
+}
+
+void Stopwatch::Counting()
+{
+    if(ms_sec <= 59.9) {
+        ms_sec += 0.1;
+    }
+    else {
+        min++;
+        ms_sec = 0.0;
+    }
+
+    if(lap_ms_sec <= 59.9) {
+        lap_ms_sec += 0.1;
+    }
+    else {
+        lap_min++;
+        lap_ms_sec = 0.0;
+    }
+    time = TimeToString(ms_sec, min);
+
+    emit sig_start_toggled();
 }
 
 QString Stopwatch::GetTime()
@@ -56,5 +63,20 @@ QString Stopwatch::GetTime()
 QString Stopwatch::GetLapTime()
 {
     lap++;
-    return "Круг: " + QString::number(lap) + ", Время: " + time;
+    lap_time = TimeToString(lap_ms_sec, lap_min);
+    lap_ms_sec = 0, lap_min = 0;
+
+    return "Круг: " + QString::number(lap) + ", Время: " + lap_time;
 }
+
+void Stopwatch::Execute(bool checked)
+{
+    if(checked){
+        timer->start(100);
+    }
+    else{
+        timer->stop();
+    }
+}
+
+
